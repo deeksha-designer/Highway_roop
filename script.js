@@ -186,7 +186,67 @@ if(careerImage){
 }
 const businessLabel=document.querySelector('.business-intro>span');
 if(businessLabel) businessLabel.textContent='OUR BUSINESSES';
+const groupIntro=document.querySelector('.statement-copy p');
+if(groupIntro) groupIntro.textContent='Highway Roop brings together five specialist businesses across precision forging, machining, steering systems, aluminium die casting and tooling.';
+const businessHeading=document.querySelector('.business-intro h2');
+if(businessHeading) businessHeading.innerHTML='<span>Five businesses.</span><span>One engineering group.</span>';
+const responsibilityHeading=document.querySelector('.responsibility-head h2');
+if(responsibilityHeading) responsibilityHeading.textContent='Built for what comes next.';
+const mediaHeading=document.querySelector('.media-heading h2');
+if(mediaHeading) mediaHeading.textContent='From across the group.';
+const businessGallery=document.querySelector('.business-gallery');
+if(businessGallery){
+  const businesses=[
+    {name:'Highway Roop Precision Technologies Limited',type:'GROUP & HOLDING COMPANY',copy:'The primary entity for all external, investor-facing and regulatory communication.',image:'assets/hero-manufacturing.png',href:'#company'},
+    {name:'Highway Roop Industries',type:'PRECISION MANUFACTURING',copy:'The group operating subsidiary focused on forged and precision-machined mobility components.',image:'assets/businesses/highway.jpg',href:'https://highway.highwayroop.com/'},
+    {name:'Roop Auto Forge Private Limited',type:'FORGING',copy:'A specialist group operating subsidiary delivering robust forged components at industrial scale.',image:'assets/businesses/roop.jpg',href:'https://roop.highwayroop.com/'},
+    {name:'Chamundi Diecast Private Limited',type:'ALUMINIUM DIE CASTING',copy:'Aluminium die-casting and lightweighting capability within the Highway Roop group.',image:'assets/businesses/chamundi.png',href:'https://www.chamundidiecast.com/'},
+    {name:'Toolsource India Private Limited',type:'CAPTIVE TOOLING',copy:'The group’s captive tooling unit supporting die design, manufacture and lifecycle capability.',image:'assets/hero-manufacturing.png',href:'#capabilities'}
+  ];
+  businessGallery.innerHTML=`<div class="business-slider-track">${businesses.map(item=>`<a href="${item.href}" class="business-card"${item.href.startsWith('http')?' target="_blank" rel="noopener"':''}><div class="business-visual"><img src="${item.image}" alt="${item.name}"><b aria-hidden="true">↗</b></div><div class="business-card-copy"><span>${item.type}</span><h3>${item.name}</h3><p>${item.copy}</p><em>Explore business →</em></div></a>`).join('')}</div><div class="business-slider-controls"><button class="business-prev" aria-label="Previous businesses">←</button><div class="business-progress"><i></i></div><button class="business-next" aria-label="Next businesses">→</button></div>`;
+  const track=businessGallery.querySelector('.business-slider-track');
+  const cards=[...track.querySelectorAll('.business-card')];
+  const indicator=businessGallery.querySelector('.business-progress i');
+  let businessIndex=0;
+  const visibleCards=()=>window.innerWidth>1050?3:window.innerWidth>700?2:1;
+  const setBusiness=index=>{const max=Math.max(0,cards.length-visibleCards());businessIndex=Math.max(0,Math.min(index,max));const gap=20;const width=(track.parentElement.clientWidth-gap*(visibleCards()-1))/visibleCards();track.style.transform=`translateX(-${businessIndex*(width+gap)}px)`;indicator.style.width=`${((businessIndex+visibleCards())/cards.length)*100}%`};
+  businessGallery.querySelector('.business-prev').addEventListener('click',()=>setBusiness(businessIndex-1));
+  businessGallery.querySelector('.business-next').addEventListener('click',()=>setBusiness(businessIndex+1));
+  window.addEventListener('resize',()=>setBusiness(businessIndex));
+  setBusiness(0);
+}
 const careerHeading=document.querySelector('.careers .feature-content h2');
 if(careerHeading) careerHeading.innerHTML='Build what moves<br>the world.';
 const customersLabel=document.querySelector('.customers-head>span');
-if(customersLabel) customersLabel.textContent='09 / TRUSTED WORLDWIDE';
+if(customersLabel) customersLabel.textContent='TRUSTED WORLDWIDE';
+document.querySelectorAll('.media-heading>span,.feature-content>span,.responsibility-grid article>span').forEach(label=>{label.textContent=label.textContent.replace(/^\s*\d+\s*[\/—-]\s*/,'')});
+const footerContact=document.querySelector('.footer-contact');
+if(footerContact && !footerContact.querySelector('a[href^="tel:"]')){const phone=document.createElement('a');phone.href='tel:+918396999592';phone.textContent='+91 83969 99592';footerContact.append(phone)}
+
+// Simplified section hierarchy: one primary heading per section.
+document.querySelectorAll('.business-intro>span,.scale-copy>span,.responsibility-head>span,.media-heading>span,.investors-head>span,.customers-head>span,.contact>p').forEach(el=>el.remove());
+document.querySelector('.business-intro>p')?.remove();
+document.querySelector('.customers-head>p')?.remove();
+
+// Type-on hero headline with an accessible reduced-motion fallback.
+const heroHeading=document.querySelector('.hero h1');
+if(heroHeading){
+  const heroText='WE ARE\nPRECISION ENGINEERING\nSPECIALISTS.';
+  heroHeading.setAttribute('aria-label',heroText.replace(/\n/g,' '));
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){heroHeading.textContent=heroText}else{
+    heroHeading.textContent='';heroHeading.classList.add('is-typing');let heroChar=0;
+    const typeHero=()=>{heroHeading.textContent=heroText.slice(0,++heroChar);if(heroChar<heroText.length){setTimeout(typeHero,52)}else{heroHeading.classList.remove('is-typing');heroHeading.classList.add('typing-complete')}};
+    setTimeout(typeHero,450);
+  }
+}
+
+const globalImage=document.querySelector('.global-reach .global-earth');
+if(globalImage && globalImage.tagName==='IMG'){
+  const globeVideo=document.createElement('video');
+  globeVideo.className='global-earth global-earth-video';
+  globeVideo.autoplay=true;globeVideo.muted=true;globeVideo.loop=true;globeVideo.playsInline=true;
+  globeVideo.poster=globalImage.src;
+  globeVideo.setAttribute('aria-label','Rotating Earth showing Highway Roop’s global presence');
+  globeVideo.innerHTML='<source src="https://svs.gsfc.nasa.gov/vis/a000000/a005500/a005570/Earth_wAtmos_spin_02_1080p60.mp4" type="video/mp4">';
+  globalImage.replaceWith(globeVideo);
+}
